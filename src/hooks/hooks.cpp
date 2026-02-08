@@ -17,17 +17,17 @@ typedef void (APIENTRY* tGlPopAttrib)(void);
 typedef void (APIENTRY* tGlPushMatrix)(void);
 typedef void (APIENTRY* tGlPopMatrix)(void);
 
-tGlDisable o_glDisable = nullptr;
-tGlEnable o_glEnable = nullptr;
-tGlColor4f o_glColor4f = nullptr;
-tGlPolygonMode o_glPolygonMode = nullptr;
-tGlBlendFunc o_glBlendFunc = nullptr;
 DrawEntity_t hooks::oDrawEntity = nullptr;
 
-tGlPushAttrib  o_glPushAttrib = nullptr;
-tGlPopAttrib   o_glPopAttrib = nullptr;
-tGlPushMatrix  o_glPushMatrix = nullptr;
-tGlPopMatrix   o_glPopMatrix = nullptr;
+tGlDisable     o_glDisable     = nullptr;
+tGlEnable      o_glEnable      = nullptr;
+tGlColor4f     o_glColor4f     = nullptr;
+tGlPolygonMode o_glPolygonMode = nullptr;
+tGlBlendFunc   o_glBlendFunc   = nullptr;
+tGlPushAttrib  o_glPushAttrib  = nullptr;
+tGlPopAttrib   o_glPopAttrib   = nullptr;
+tGlPushMatrix  o_glPushMatrix  = nullptr;
+tGlPopMatrix   o_glPopMatrix   = nullptr;
 
 
 __declspec(naked) void hkDrawEntity()
@@ -65,16 +65,16 @@ void init_gl()
     HMODULE ogl = GetModuleHandleA("opengl32.dll");
     if (!ogl) return;
 
-    o_glDisable = (tGlDisable)GetProcAddress(ogl, "glDisable");
-    o_glEnable = (tGlEnable)GetProcAddress(ogl, "glEnable");
-    o_glColor4f = (tGlColor4f)GetProcAddress(ogl, "glColor4f");
+    o_glDisable     = (tGlDisable)GetProcAddress(ogl, "glDisable");
+    o_glEnable      = (tGlEnable)GetProcAddress(ogl, "glEnable");
+    o_glColor4f     = (tGlColor4f)GetProcAddress(ogl, "glColor4f");
     o_glPolygonMode = (tGlPolygonMode)GetProcAddress(ogl, "glPolygonMode");
-    o_glBlendFunc = (tGlBlendFunc)GetProcAddress(ogl, "glBlendFunc");
+    o_glBlendFunc   = (tGlBlendFunc)GetProcAddress(ogl, "glBlendFunc");
 
-    o_glPushAttrib = (tGlPushAttrib)GetProcAddress(ogl, "glPushAttrib");
-    o_glPopAttrib = (tGlPopAttrib)GetProcAddress(ogl, "glPopAttrib");
-    o_glPushMatrix = (tGlPushMatrix)GetProcAddress(ogl, "glPushMatrix");
-    o_glPopMatrix = (tGlPopMatrix)GetProcAddress(ogl, "glPopMatrix");
+    o_glPushAttrib  = (tGlPushAttrib)GetProcAddress(ogl, "glPushAttrib");
+    o_glPopAttrib   = (tGlPopAttrib)GetProcAddress(ogl, "glPopAttrib");
+    o_glPushMatrix  = (tGlPushMatrix)GetProcAddress(ogl, "glPushMatrix");
+    o_glPopMatrix   = (tGlPopMatrix)GetProcAddress(ogl, "glPopMatrix");
 }
 
 
