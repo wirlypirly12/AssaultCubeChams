@@ -63,7 +63,7 @@ void hooks::destroy() {
 	MH_DisableHook(MH_ALL_HOOKS);
 }
 
-void __cdecl hooks::on_entity_render(int a1, float a2, int a3, int a4, unsigned int a5, int a6)
+void __cdecl hooks::on_entity_render(int a1, int a2, int a3, int a4, unsigned int a5, int a6)
 {
     if (!hooks::oDrawEntity) {
         MessageBoxA(NULL, "oDrawEntity is NULL!", "Error", MB_OK);
@@ -98,4 +98,5 @@ void hooks::setup() {
 
 	MH_EnableHook(MH_ALL_HOOKS);
 }
+
 
