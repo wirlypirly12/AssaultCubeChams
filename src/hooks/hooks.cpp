@@ -1,6 +1,7 @@
 #include "hooks.h"
 #include "minhook/MinHook.h"
 
+#include "../structs/structs.h"
 
 #include <iostream>
 
@@ -17,6 +18,9 @@ typedef void (APIENTRY* tGlPopAttrib)(void);
 typedef void (APIENTRY* tGlPushMatrix)(void);
 typedef void (APIENTRY* tGlPopMatrix)(void);
 
+//typedef Player* (__fastcall* GetEntity_t)(unsigned int client_num);
+//GetEntity_t get_entity = (GetEntity_t)(0x047C8C0);
+
 DrawEntity_t hooks::oDrawEntity = nullptr;
 
 tGlDisable     o_glDisable     = nullptr;
@@ -28,7 +32,6 @@ tGlPushAttrib  o_glPushAttrib  = nullptr;
 tGlPopAttrib   o_glPopAttrib   = nullptr;
 tGlPushMatrix  o_glPushMatrix  = nullptr;
 tGlPopMatrix   o_glPopMatrix   = nullptr;
-
 
 __declspec(naked) void hkDrawEntity()
 {
@@ -77,41 +80,48 @@ void init_gl()
     o_glPopMatrix   = (tGlPopMatrix)GetProcAddress(ogl, "glPopMatrix");
 }
 
-
-
 void hooks::destroy() {
 	MH_DisableHook(MH_ALL_HOOKS);
 }
 
-void __cdecl hooks::on_entity_render(int a1, int a2, int a3, int a4, unsigned int a5, int a6)
+void __cdecl hooks::on_entity_render(
+    int a1, int a2, int a3, int a4, unsigned int a5, int a6)
 {
-    if (!hooks::oDrawEntity)
+
+    if (!oDrawEntity)
         return;
 
-    if (!a1 || !a6)
-        return;
+    if (!a1)
+        return oDrawEntity(a1, a2, a3, a4, a5, a6);
+
+    if (a3 & 0x1000)
+        return oDrawEntity(a1, a2, a3, a4, a5, a6);
 
 
-    o_glPushAttrib(GL_ALL_ATTRIB_BITS);
+    Player* p = (Player*)a6;
+
+   
+    if (!p)
+        return oDrawEntity(a1, a2, a3, a4, a5, a6);
+
+
+    if (p->cn < 0 || p->cn >= 32)
+        return oDrawEntity(a1, a2, a3, a4, a5, a6);
+
+
+    o_glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     o_glPushMatrix();
 
-    o_glDisable(GL_DEPTH_TEST);
-    o_glDisable(GL_LIGHTING);
-    o_glEnable(GL_BLEND);
-    o_glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    o_glColor4f(0.0f, 0.5f, 1.0f, 0.9f);
-    oDrawEntity(a1, a2, a3, a4, a5, a6);
+    std::cout << p->health << std::endl;
+    if (p->health > 0)
+    {
+        o_glDisable(GL_DEPTH_TEST);
+        o_glEnable(GL_BLEND);
+        o_glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        o_glColor4f(0.0f, 0.6f, 1.0f, 0.8f);
+    }
 
-    o_glEnable(GL_DEPTH_TEST);
-    o_glDisable(GL_BLEND);
-    o_glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
     oDrawEntity(a1, a2, a3, a4, a5, a6);
-
-    o_glEnable(GL_BLEND);
-    o_glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    o_glColor4f(1.0f, 1.0f, 0.0f, 0.5f);
-    oDrawEntity(a1, a2, a3, a4, a5, a6);
-    o_glDisable(GL_BLEND);
 
     o_glPopMatrix();
     o_glPopAttrib();
@@ -125,11 +135,12 @@ void hooks::setup() {
 	MH_Initialize();
 
     MH_CreateHook(
-        (LPVOID)0x0415560,
+        (LPVOID)0x0415560, // 0x015560,
         (LPVOID)hkDrawEntity,
         (LPVOID*)&oDrawEntity
     );
 
 	MH_EnableHook(MH_ALL_HOOKS);
+
 }
 
