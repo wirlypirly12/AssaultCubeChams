@@ -112,7 +112,6 @@ void __cdecl hooks::on_entity_render(
     o_glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     o_glPushMatrix();
 
-    std::cout << p->health << std::endl;
     if (p->health > 0)
     {
         o_glDisable(GL_DEPTH_TEST);
