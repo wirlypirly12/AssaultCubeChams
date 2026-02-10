@@ -37,27 +37,27 @@ __declspec(naked) void hkDrawEntity()
 {
     __asm
     {
-        push ebp
-        mov ebp, esp
-        pushad
-        sub esp, 16
-        movdqu[esp], xmm3
-
-        push[ebp + 20]
-        push[ebp + 16]
-        push[ebp + 12]
-        push[ebp + 8]
-        sub esp, 4
-        movss[esp], xmm3
-        push ecx
-
-        call hooks::on_entity_render
-        add esp, 24
-
-        movdqu xmm3, [esp]
-        add esp, 16
-        popad
-        pop ebp
+		push ebp
+		mov ebp, esp
+		pushad
+		sub esp, 0x10
+		movdqu [esp], xmm3
+		
+		push [ebp + 0x14]
+		push [ebp + 0x10]
+		push [ebp + 0xC]
+		push [ebp + 0x8]
+		sub esp, 0x4
+		movss [esp], xmm3
+		push ecx
+		
+		call hooks::on_entity_render
+		add esp, 0x18
+		
+		movdqu xmm3, [esp]
+		add esp, 0x10
+		popad
+		pop ebp
 
         jmp[hooks::oDrawEntity]
     }
@@ -142,4 +142,5 @@ void hooks::setup() {
 	MH_EnableHook(MH_ALL_HOOKS);
 
 }
+
 
